@@ -3,16 +3,27 @@ import numpy as np
 import tensorflow as tf
 import pickle
 import requests
+import gdown
+import os
 from bs4 import BeautifulSoup
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # Set Streamlit Page Configuration
 st.set_page_config(page_title="Fake News Detector", page_icon="📰", layout="wide")
 
-# Load the trained model
+# Define Google Drive Model Link
+MODEL_URL = "https://drive.google.com/uc?id=1wsXWaNEvcJ13P3NW6SxFKxp69aZvZ9kr"
+MODEL_PATH = "word2vec_cnn_model.h5"
+
+# **Download the model from Google Drive if it doesn't exist**
+if not os.path.exists(MODEL_PATH):
+    with st.spinner("Downloading Model... Please wait ⏳"):
+        gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+
+# **Load the trained model**
 @st.cache_resource
 def load_model():
-    return tf.keras.models.load_model("word2vec_cnn_model.h5", compile=False)
+    return tf.keras.models.load_model(MODEL_PATH, compile=False)
 
 model = load_model()
 
@@ -66,10 +77,9 @@ if st.button("🔍 Predict", use_container_width=True):
                     paragraphs = soup.find_all("p")
                     extracted_text = " ".join([para.get_text() for para in paragraphs])
 
-                    # **GPT-Based Extraction**
+                    # **GPT-Based Extraction Placeholder**
                     gpt_prompt = f"Extract the main news article content from the following webpage text:\n\n{extracted_text}"
-                    # Simulated GPT Extraction (You Need to Replace This with an API Call)
-                    extracted_news = extracted_text[:1500]  # Keeping a reasonable length
+                    extracted_news = extracted_text[:1500]  # Simulating GPT extraction
                     news_text = extracted_news
                     news_title = "Extracted from URL"
                     st.success("✅ Extracted news content from URL!")

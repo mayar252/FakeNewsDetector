@@ -3,3 +3,4 @@ tensorflow
 numpy
 requests
 beautifulsoup4
+gdown
